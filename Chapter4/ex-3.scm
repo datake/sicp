@@ -1,0 +1,25 @@
+(load "evaluator_igarashi.scm")
+(define ( change coins amount)
+  (cond ( (zero? amount)'())
+	((null? coins) (throw 'not-found-coins -1))
+	(else
+	 (let ((c (car coins)))
+	   (if(> c amount) (change (cdr coins) amount)
+	      (or (catch 'fail
+			 (cons c (change coins (- amount c)
+					 )
+			       )
+			 )
+					;先頭にあるコインをできるかぎり使おうとするため可能なコインの組み合わせがあるときでも失敗してしまうことがある。例外処理で解が一つでも存在する場合に答えがえられるようにする。
+		  (change (cdr coins) amount)
+		  )
+	      )
+	   )
+	 )
+	)
+  )
+
+(define us-coins '(25 10 5 1))
+(define gb-coins '(50 20 10 5 2 1))
+(change gb-coins 43)
+(change us-coins 43)
